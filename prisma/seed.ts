@@ -34,7 +34,11 @@ async function main() {
             name: 'Empresa Constructora A',
             rut: '76.123.456-7',
             contactEmail: 'contacto@constructora-a.cl',
-            costPerMeal: 4500,
+            costBreakfast: 3500,
+            costLunch: 4500,
+            costDinner: 4000,
+            costSnack: 2000,
+            costEnhanced: 5500,
         },
     });
 
@@ -45,7 +49,11 @@ async function main() {
             name: 'Minería del Norte B',
             rut: '77.987.654-3',
             contactEmail: 'rrhh@minerianorte.cl',
-            costPerMeal: 5200,
+            costBreakfast: 4000,
+            costLunch: 5200,
+            costDinner: 4800,
+            costSnack: 2500,
+            costEnhanced: 6500,
         },
     });
 
