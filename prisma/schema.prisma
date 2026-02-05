@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  admin
+  operador
+  supervisor
+}
+
+enum MealType {
+  desayuno
+  almuerzo
+  cena
+  colacion
+}
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  name         String
+  role         UserRole      @default(operador)
+  avatar       String?
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  consumptions Consumption[] @relation("RegisteredBy")
+
+  @@map("users")
+}
+
+model Company {
+  id                String    @id @default(uuid())
+  name              String
+  rut               String    @unique
+  contactEmail      String?
+  contactPhone      String?
+  address           String?
+  costBreakfast      Decimal   @default(0) @db.Decimal(10, 2)
+  costLunch          Decimal   @default(0) @db.Decimal(10, 2)
+  costDinner         Decimal   @default(0) @db.Decimal(10, 2)
+  costSnack          Decimal   @default(0) @db.Decimal(10, 2)
+  costEnhanced       Decimal   @default(0) @db.Decimal(10, 2)
+  isActive          Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  workers           Worker[]
+  consumptions      Consumption[]
+
+  @@map("companies")
+}
+
+model DiningHall {
+  id           String        @id @default(uuid())
+  name         String
+  location     String?
+  capacity     Int?
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  consumptions Consumption[]
+
+  @@map("dining_halls")
+}
+
+model Worker {
+  id           String        @id @default(uuid())
+  qrCode       String        @unique
+  name         String
+  rut          String        @unique
+  email        String?
+  department   String?
+  photoUrl     String?
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  company      Company       @relation(fields: [companyId], references: [id])
+  companyId    String
+  consumptions Consumption[]
+
+  @@map("workers")
+}
+
+model Consumption {
+  id           String     @id @default(uuid())
+  mealType     MealType
+  isEnhanced   Boolean    @default(false)
+  costAtTime   Decimal    @default(0) @db.Decimal(10, 2)
+  registeredAt DateTime   @default(now())
+  
+  worker       Worker     @relation(fields: [workerId], references: [id])
+  workerId     String
+  
+  company      Company    @relation(fields: [companyId], references: [id])
+  companyId    String
+  
+  diningHall   DiningHall @relation(fields: [diningHallId], references: [id])
+  diningHallId String
+  
+  registeredBy User       @relation("RegisteredBy", fields: [userId], references: [id])
+  userId       String
+
+  @@map("consumptions")
+}
